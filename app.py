@@ -18,7 +18,7 @@ def addMatchCount():
     global_match_count = global_match_count + 1
 
 def send_discord_notification(message):
-    webhook_url = 'https://discord.com/api/webhooks/1211170118495768586/COQY_1Dm726rS_iEV5estDFtg_m7kZ_Qj8gpwasEnPL8Vp1Mxvlevh0i5sYHZHAdWVpl'
+    webhook_url = 'INSERT_DISCORD_WEBHOOK_URL'
     data = {
         'content': message,
     }
