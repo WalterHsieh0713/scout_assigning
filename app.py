@@ -24,6 +24,10 @@ def send_discord_notification(message):
     }
     requests.post(webhook_url, json=data)
 
+@app.route('/', methods=['GET'])
+def sanity_check():
+    return "PONG"
+
 @app.route('/', methods=['POST'])
 
 def root():
