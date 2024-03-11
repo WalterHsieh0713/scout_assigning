@@ -69,7 +69,7 @@ def root():
     if message_type == 'verification':
         verification_key = message_data.get('verification_key', '')
         print(f"Verification Key: {verification_key}")
-        return verification_key, 200
+        send_discord_notification(f"Webhook verification key: {verification_key}")
 
     elif message_type == 'upcoming_match':
         event_key = message_data.get('event_key')
