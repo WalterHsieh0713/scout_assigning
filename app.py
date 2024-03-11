@@ -110,7 +110,7 @@ def root():
         send_discord_notification("\n".join(rows))
 
     elif message_type == "ping":
-        print("PING")
+        send_discord_notification("PING")
     return '', 200
 
 if __name__ == '__main__':
