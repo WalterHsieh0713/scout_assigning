@@ -4,7 +4,7 @@ import requests
 app = Flask(__name__)
 
 global_scout_count = 0
-global_match_count = 0
+global_match_count = 1
 
 def getScoutCount():
     return global_scout_count
@@ -18,7 +18,7 @@ def addMatchCount():
     global_match_count = global_match_count + 1
 
 def send_discord_notification(message):
-    webhook_url = 'INSERT_DISCORD_WEBHOOK_URL'
+    webhook_url = 'https://discord.com/api/webhooks/1211170118495768586/COQY_1Dm726rS_iEV5estDFtg_m7kZ_Qj8gpwasEnPL8Vp1Mxvlevh0i5sYHZHAdWVpl'
     data = {
         'content': message,
     }
@@ -28,20 +28,39 @@ def send_discord_notification(message):
 def sanity_check():
     return "PONG"
 
-@app.route('/', methods=['POST'])
+def atPit(M):
+    if (M-1) % 20 < 10:
+        return [6,7]
+    elif (M-1) % 20 < 15:
+        return [1,4]
+    else:
+        return [2,3]
 
+@app.route('/', methods=['POST'])
 def root():
     num_to_scout = 4           #change to control number of teams to scout
     scouter_ID = [
-        "1014114774818226197", #ALEX
-        "1147797652747079713", #BARNETT
-        "915223123681505290",  #BENJAMIN
-        "716094833890033774",  #LUKE
-        "888711983489232946",  #MATT
-        "960825266765176862",  #RAYMOND
+        "1014114774818226197", #ALEX     0
+        "1147797652747079713", #BARNETT  1
+        "915223123681505290",  #BENJAMIN 2
+        "716094833890033774",  #LUKE     3
+        "888711983489232946",  #MATT     4
+        "960825266765176862",  #RAYMOND  5
+        "967704680648024069",  #AUDREY   6
+        "843465970483855362",  #CHLOE    7
+    ]
+    scouter_name = [
+        "Alex",     #0
+        "Barnett",  #1
+        "Benjamin", #2
+        "Luke",     #3
+        "Matt",     #4
+        "Raymond",  #5
+        "Audrey",   #6
+        "Chloe",    #7
     ]
     exclude = [
-        # add teams to not scout (RANK 30 - 35) on Day 2
+        # add teams to not scout (RANK 30 - 35) after practice matches
     ]
     data = request.get_json()
     message_type = data.get('message_type', '')
@@ -49,11 +68,11 @@ def root():
 
     if message_type == 'verification':
         verification_key = message_data.get('verification_key', '')
-        print("Verification Key: ", verification_key)
+        print(f"Verification Key: {verification_key}")
 
     elif message_type == 'upcoming_match':
         event_key = message_data.get('event_key')
-        match_key = ('match_key')
+        match_key = message_data.get('match_key') 
         match_num = match_key.replace(f"{event_key}_", '')
         match_type = "QUALS"
         team_keys = message_data.get('team_keys')
@@ -63,9 +82,10 @@ def root():
             match_num = match_num.replace("sf", "").replace("m1", "")
             match_type = "SEMIFINALS"
         elif "f" in match_num:
-            match_num = match_num.replace("m1f", "")
+            match_num = match_num.replace("f1m", "")
             match_type = "FINALS"
         rows = [
+            ".",
             f":mega: UPCOMING (~7min): {match_type} MATCH {match_num} SCOUTERS :mega:",
         ]
         temp = 0
@@ -73,11 +93,18 @@ def root():
             if temp >= num_to_scout:
                 break
             if team[3:] not in exclude:
-                rows.append(f"<@!{scouter_ID[getScoutCount() % 6]}> - {team[3:]} ")
-                print(getScoutCount())
+                while (getScoutCount()%8) in atPit(getMatchCount()):
+                    addScoutCount()
+                rows.append(f"<@!{scouter_ID[getScoutCount() % 8]}> - {team[3:]} ")
+                print(f"scout_num: {getScoutCount()}")
                 addScoutCount()
                 temp = temp + 1
+        
         rows.append("")
+        if atPit(getMatchCount()) != atPit(getMatchCount()+1):
+            rows.append(f"{scouter_name[atPit(getMatchCount()+1)[0]]} and {scouter_name[atPit(getMatchCount()+1)[1]]} head to pit after this match.")
+        rows.append(".")
+
         addMatchCount()
         send_discord_notification("\n".join(rows))
 
