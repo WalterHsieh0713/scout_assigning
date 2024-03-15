@@ -46,7 +46,7 @@ def root():
         "716094833890033774",  #LUKE     3
         "888711983489232946",  #MATT     4
         "960825266765176862",  #RAYMOND  5
-        "967704680648024069",  #AUDREY   6
+        "852451913014444042",  #EVAN     6
         "843465970483855362",  #CHLOE    7
     ]
     scouter_name = [
@@ -56,11 +56,15 @@ def root():
         "Luke",     #3
         "Matt",     #4
         "Raymond",  #5
-        "Audrey",   #6
+        "Evan",     #6
         "Chloe",    #7
     ]
     exclude = [
         # add teams to not scout (RANK 30 - 35) after practice matches
+        "1678",
+        "254",
+        "6947",
+        "604",
     ]
     data = request.get_json()
     message_type = data.get('message_type', '')
